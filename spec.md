@@ -1,12 +1,14 @@
 # Bài nộp LAB5 — T5 Ví điện tử · Nhóm ABC
 
-**Lớp:** L3A · **Bàn / zone:** _Điền tại lớp_ · **Track:** T5 — Ví điện tử
+**Lớp:** L3A · **Bàn / zone:** Zone 5 · **Track:** T5 — Ví điện tử
 
 | Họ và Tên       | Mã Học Viên | Việc đã làm |
 | --------------- | ----------- | ----------- |
-| Ngô Huy Hoàng   | 2A202603622 | _Điền sau_  |
-| Hoàng Văn Bảo   | 2A202603549 | _Điền sau_  |
-| Bùi Nguyên Dũng | 2A202603587 | _Điền sau_  |
+| Ngô Huy Hoàng   | 2A202603622 | Hoàn thiện §6–§7, tổng hợp phản hồi sau demo và rà soát bài nộp |
+| Hoàng Văn Bảo   | 2A202603549 | Hoàn thiện §1–§3: phạm vi, kịch bản rủi ro và UX khi AI sai |
+| Bùi Nguyên Dũng | 2A202603587 | Hoàn thiện §4–§5: mức tự chủ, prototype và ảnh minh họa |
+
+> **Cách làm việc:** Cả ba thành viên cùng bàn luận và chốt quyết định trên lớp; cả nhóm cùng tham gia phần demo.
 
 > Nhóm cần đúng 3 thành viên. Mỗi quyết định nên ghi đủ: các phương án đã cân nhắc, phương án được chọn, lý do chọn và lý do loại các phương án còn lại.
 
@@ -18,6 +20,11 @@
 - **Không làm 1 — AI tự nhả giao dịch (`nha_giao_dich`).** Sai thì người bị lừa mất tiền ngay và không đảo được. Đã cân nhắc "AI nhả khi độ chắc cao" nhưng loại, vì kịch bản S01 cho thấy người bị lừa vẫn xác thực khuôn mặt đúng, nên độ chắc cao không đồng nghĩa với an toàn. Chỉ tư vấn viên được quyết nhả.
 - **Không làm 2 — Hứa hoặc quyết định hoàn tiền / kết quả tra soát.** Không có tool hoàn tiền, và AI không biết trạng thái giao dịch sau tra soát (S06, S08). Với giao dịch đã hoàn tất, AI chỉ hướng dẫn tra soát, giữ bằng chứng và chuyển người. Đã cân nhắc "báo trước khả năng được hoàn" nhưng loại vì vẫn là một lời hứa.
 - **Không làm 3 — Nói về ngưỡng tiền, số lần hay cách hệ thống phát hiện gian lận.** Nói ra là chỉ đường cho kẻ lừa đảo né hệ thống (S07), và dữ liệu của track không có thông tin này nên AI chỉ có thể bịa. Khi bị hỏi dò, AI từ chối khéo rồi quay về việc cần làm.
+
+
+### Quyết định chọn Track 5
+
+Nhóm chọn **T5 — Ví điện tử** vì đây là bối cảnh gần gũi nhất, cả ba thành viên đều từng gặp hoặc quan sát các tình huống chuyển khoản, giao dịch bị giữ và cảnh báo lừa đảo nên dễ đưa ra kịch bản giống người dùng thật. Nhóm đã cân nhắc **T3 — Du lịch** nhưng loại vì chưa có nhiều trải nghiệm và insight về quy trình đổi chuyến, giữ chỗ hay xử lý sự cố hàng không. Với **T4 — Thương mại điện tử**, nhóm không thấy phù hợp bằng T5 nên ưu tiên bài toán ví điện tử. Nhóm không ghi thêm lý do cho T1–T2 vì không còn đủ bằng chứng về thảo luận lúc chọn track.
 
 ## §2. Kịch bản rủi ro (chặng 2)
 
@@ -187,15 +194,27 @@ Nhóm chọn cách hiện theo ngôn ngữ người dùng: “đã làm / bị c
 
 ## §7. Demo
 
-### Luồng demo đã chuẩn bị
+### Luồng đã demo trên lớp
 
 1. **S03 — người thật đang gấp:** người dùng nói đang ở quầy viện phí; AI hỏi một câu loại trừ trước khi gửi xác thực có điều kiện.
 2. **S01 — dấu hiệu thao túng:** người dùng bổ sung có người gọi thúc chuyển tiền; policy giữ giao dịch, chặn xác thực/nhả và chuyển tư vấn viên khẩn.
 3. **S08 — người thân ở máy khác:** AI không khóa ví hộ, không hứa hoàn tiền, đưa kênh chính thức và chuyển người.
 4. **Màn hình tư vấn viên:** trình bày bằng chứng và các hành động đã làm/bị chặn; chỉ tư vấn viên mới có quyền duyệt nhả.
 
-- **Ca lạ do TA/nhóm khác đưa:** _Điền sau khi demo thực tế._
-- **Prototype sẽ xử lý:** đối chiếu quyền người nhắn, trạng thái giao dịch và cost-of-error; nếu thiếu dữ kiện thì hỏi tối đa một câu, nếu có dấu hiệu thao túng hoặc độ chắc thấp thì giữ nguyên trạng thái an toàn và chuyển người.
-- **Nhóm có đổi quyết định sau ca đó không:** _Điền sau khi nhận ca lạ._
+Cả ba thành viên cùng tham gia bàn luận và trình bày phần demo trên lớp.
 
-> Phân công phần trình bày và cột “Việc đã làm” do nhóm tự chốt trước khi nộp.
+### Ca lạ và phản hồi nhận được
+
+Người xem đặt vấn đề: trong tình huống khách đang chuyển khoản gấp, hệ thống cần biết **tài khoản thụ hưởng là tài khoản cá nhân hay tài khoản doanh nghiệp/tổ chức**. Chuyển tiền vào tài khoản cá nhân trong một yêu cầu tự xưng là bệnh viện hoặc cơ quan chức năng là tín hiệu rủi ro cao hơn, nhưng **không đủ để tự kết luận lừa đảo**.
+
+Prototype hiện tại chưa có trường dữ liệu đã xác minh về loại tài khoản thụ hưởng, nên AI chưa thể dùng tín hiệu này một cách đáng tin cậy. Nếu chỉ hỏi người dùng hoặc để LLM tự đoán từ tên tài khoản thì vẫn có thể bịa hoặc chặn nhầm giao dịch hợp pháp.
+
+### Quyết định thay đổi sau demo
+
+Nhóm quyết định bổ sung ba thay đổi cho vòng tiếp theo:
+
+1. **Thêm dữ liệu xác định từ hệ thống ngân hàng:** `loai_tai_khoan_thu_huong = ca_nhan | doanh_nghiep | chua_xac_dinh`. Đây là metadata từ hệ thống, không để LLM tự suy đoán.
+2. **Dùng loại tài khoản như một tín hiệu, không phải phán quyết:** nếu người nhận là tài khoản cá nhân **và** xuất hiện thêm dấu hiệu mạo danh, thúc ép hoặc yêu cầu “chuyển tiền để xác minh”, hệ thống giữ nguyên giao dịch và chuyển tư vấn viên. Tài khoản cá nhân đứng một mình chỉ làm tăng mức cảnh báo, không tự động kết luận lừa đảo.
+3. **Sửa UX các đoạn chat gợi ý:** thay các câu dễ dẫn dắt người dùng bằng câu hỏi trung lập, giúp thu thập đúng dữ kiện. Ví dụ: “Bạn nhận thông tin chuyển khoản từ đâu?”, “Tên người nhận hiển thị là cá nhân hay tổ chức?”, “Có ai đang gọi điện hoặc giục bạn chuyển ngay không?”. Người dùng vẫn có thể tự nhập câu của mình và bấm “Trợ lý hiểu sai?” để sửa nhận định.
+
+Phản hồi này không làm nhóm thay đổi nguyên tắc cốt lõi: AI vẫn không được tự `nha_giao_dich`; thay đổi nằm ở việc bổ sung bằng chứng tốt hơn trước khi phân loại và chuyển người.

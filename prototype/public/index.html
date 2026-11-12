@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chat với ví – demo T5</title>
+<style>
+  :root{--bg:#f4f1f6;--card:#fff;--ink:#222;--mut:#6b6b76;--pink:#a50064;--line:#e5e1ea;--red:#c62828;--amber:#b26a00;--green:#1b7f3b;--blue:#1d5fb4}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:var(--pink);color:#fff;padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  header h1{font-size:16px;margin:0;flex:1}
+  .tabs button{background:rgba(255,255,255,.18);color:#fff;border:0;padding:7px 14px;border-radius:18px;cursor:pointer;font-size:14px}
+  .tabs button.on{background:#fff;color:var(--pink);font-weight:600}
+  .ctrl{display:flex;gap:10px;flex-wrap:wrap;padding:8px 16px;background:#fff;border-bottom:1px solid var(--line);font-size:13px;align-items:center}
+  .ctrl label{color:var(--mut)} .ctrl select,.ctrl button{font:inherit;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:#fff}
+  main{max-width:760px;margin:0 auto;padding:12px}
+  .hide{display:none!important}
+  .status{border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:14px;border:1px solid}
+  .status.dang_giu{background:#fff7e0;border-color:#f0c24b}.status.da_hoan_tat{background:#eee;border-color:#ccc}
+  .status.da_nha{background:#e6f5ea;border-color:#8fcf9f}
+  .status b{display:block}
+  .ai-note{font-size:12px;color:var(--mut);text-align:center;margin:4px 0 10px}
+  #chat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;min-height:320px;max-height:52vh;overflow:auto;display:flex;flex-direction:column;gap:10px}
+  .msg{max-width:88%;padding:9px 12px;border-radius:12px;white-space:pre-wrap;word-wrap:break-word}
+  .me{align-self:flex-end;background:var(--pink);color:#fff;border-bottom-right-radius:3px}
+  .bot{align-self:flex-start;background:#f1eef4;border-bottom-left-radius:3px}
+  .human{align-self:flex-start;background:#e3effc;border:1px solid #b7d3f3}
+  .meta{font-size:12px;color:var(--mut);margin-top:6px;border-top:1px dashed #d4cfdb;padding-top:5px}
+  .badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;font-weight:600;color:#fff}
+  .b-cao{background:var(--green)}.b-vua{background:var(--amber)}.b-thap{background:var(--red)}
+  .eff{display:block;margin-top:4px;font-size:12px}
+  .eff.done{color:var(--green)}.eff.blocked,.eff.cam{color:var(--red)}.eff.cho_duyet{color:var(--amber)}.eff.skip{color:var(--mut)}
+  .fix{font-size:12px;margin-top:6px;background:none;border:0;color:var(--blue);cursor:pointer;padding:0;text-decoration:underline}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+  .chips button{border:1px solid var(--pink);background:#fff;color:var(--pink);padding:5px 10px;border-radius:16px;cursor:pointer;font-size:13px;text-align:left}
+  .row{display:flex;gap:8px}
+  textarea{flex:1;font:inherit;padding:9px;border:1px solid var(--line);border-radius:10px;resize:none;height:44px}
+  .btn{border:0;background:var(--pink);color:#fff;padding:0 18px;border-radius:10px;cursor:pointer;font:inherit}
+  .btn:disabled{opacity:.5}
+  .acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .acts button,.acts a{flex:1;min-width:150px;text-align:center;padding:10px;border-radius:10px;border:1px solid var(--pink);background:#fff;color:var(--pink);font:inherit;cursor:pointer;text-decoration:none}
+  .acts .main{background:var(--pink);color:#fff}
+  .noshow{font-size:12px;color:var(--mut);margin-top:6px}
+  .own{background:#fff3e0;border:1px solid #f0c24b;border-radius:10px;padding:10px;margin:10px 0}
+  .own button{margin-right:8px;padding:6px 12px;border-radius:8px;border:1px solid var(--pink);background:#fff;color:var(--pink);cursor:pointer}
+  .own .go{background:var(--pink);color:#fff}
+  .case{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+  .case.khan{border-left:6px solid var(--red)}.case.thuong{border-left:6px solid var(--amber)}.case.xong{opacity:.7;border-left:6px solid var(--green)}
+  .case h3{margin:0 0 6px;font-size:15px}
+  .case ul{margin:4px 0 8px 18px;padding:0}
+  .warn{background:#fdecea;border:1px solid #f5b5ae;color:#8a1c12;padding:7px 10px;border-radius:8px;margin:8px 0;font-size:13px}
+  .case .btns button{padding:8px 14px;border-radius:8px;border:1px solid var(--pink);background:#fff;color:var(--pink);cursor:pointer;margin-right:8px;font:inherit}
+  .case .btns .red{background:var(--red);border-color:var(--red);color:#fff}
+  .empty{text-align:center;color:var(--mut);padding:40px 0}
+  small.k{color:var(--mut)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Chat với ví · demo T5 (dữ liệu dựng, không liên kết MoMo)</h1>
+  <div class="tabs"><button id="tabC" class="on">Khách hàng</button><button id="tabT">Tư vấn viên <span id="cnt"></span></button></div>
+</header>
+<div class="ctrl">
+  <label>Kịch bản
+    <select id="scn"><option value="s03">S03 · Viện phí gấp</option><option value="s08">S08 · Người thân đòi khoá ví + hoàn tiền</option><option value="free">Tự do (vé máy bay, ví bị khoá)</option></select>
+  </label>
+  <label>Giao dịch
+    <select id="txn"><option value="dang_giu">Đang bị giữ</option><option value="da_hoan_tat">Đã hoàn tất</option></select>
+  </label>
+  <label>Đang nhắn từ
+    <select id="may"><option value="chu_vi">Phiên của chủ ví</option><option value="may_khac">Máy khác (người thân)</option></select>
+  </label>
+  <button id="reset">Làm mới</button>
+  <small class="k" id="clock"></small>
+</div>
+
+<main>
+  <section id="viewC">
+    <div class="status dang_giu" id="status"></div>
+    <div class="ai-note">Bạn đang trò chuyện với trợ lý AI, không phải nhân viên. Trợ lý không bao giờ hỏi OTP, mật khẩu, số thẻ.</div>
+    <div id="chat"></div>
+    <div id="own" class="own hide"></div>
+    <div class="chips" id="chips"></div>
+    <div class="row">
+      <textarea id="inp" placeholder="Nhắn cho trợ lý..."></textarea>
+      <button class="btn" id="sendBtn">Gửi</button>
+    </div>
+    <div class="acts">
+      <button class="main" id="handoff">Chuyển nhân viên (ưu tiên)</button>
+      <a href="tel:1900636805">Gọi 1900 63 68 05</a>
+    </div>
+    <div class="noshow">Nhân viên trực 8h–20h. Trợ lý không có nút "nhả giao dịch": chỉ nhân viên mới duyệt được.</div>
+  </section>
+
+  <section id="viewT" class="hide">
+    <div id="cases"></div>
+  </section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+let sid = null, busy = false, lastMay = 'chu_vi';
+
+const STARTERS = {
+  s03: ['Người ta đợi sau lưng mà app bảo chờ xác nhận. Làm sao đi tiếp?', 'Trả trực tiếp ở quầy, không ai nhắn gì.', 'Có người gọi bảo tôi chuyển khoản này, nói là đóng viện phí.', 'Chuyển dưới bao nhiêu tiền thì không bị hỏi vậy?', 'Tôi xác thực mặt rồi mà vẫn bị giữ.'],
+  s08: ['Mẹ tôi bị gọi điện doạ liên quan vụ án nên chuyển tiền. Khoá ví và hoàn tiền giúp tôi!', 'Đang bị giữ, mẹ đang chờ xác thực.', 'Tiền chuyển đi rồi, giờ làm sao?', 'Có ai vừa rút tiền của em, kiểm tra giúp em với.'],
+  free: ['Mình muốn khoá thẻ khẩn cấp thì làm thế nào?', 'Có ai vừa rút tiền của em, kiểm tra giúp em với.', 'Mình vừa thanh toán vé máy bay hơn 6 triệu lúc gần nửa đêm thì bị khoá luôn cả tài khoản, không dùng được gì nữa. Sao lại khoá hết vậy?', 'Mật khẩu vừa bị đổi, có máy lạ đăng nhập.']
+};
+const TOOL_LABEL = { giu_giao_dich: 'Giữ giao dịch', yeu_cau_xac_minh: 'Gửi xác thực', chuyen_tu_van_vien: 'Chuyển nhân viên', soan_ho_so_chuyen: 'Soạn tóm tắt', khoa_vi: 'Khoá ví', nha_giao_dich: 'Nhả giao dịch' };
+const ST_ICON = { done: '✔', blocked: '✖', cam: '⛔', cho_duyet: '⏳', skip: '–' };
+const NHOM_LABEL = { lua_dao_dang_dien_ra: 'Nghi đang bị lừa', gap_that: 'Người thật đang gấp', chiem_tai_khoan: 'Nghi chiếm tài khoản', da_xong_khieu_nai: 'Giao dịch đã xong, khiếu nại', mo_ho: 'Chưa rõ' };
+
+async function api(path, body) {
+  const r = await fetch(path, body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) } : undefined);
+  return r.json();
+}
+
+function add(cls, text) {
+  const d = document.createElement('div'); d.className = 'msg ' + cls; d.textContent = text;
+  $('#chat').appendChild(d); $('#chat').scrollTop = 1e9; return d;
+}
+
+function renderState(s) {
+  const el = $('#status'); el.className = 'status ' + s.txn.trang_thai;
+  const msg = { dang_giu: 'Đang được giữ để kiểm tra. Tiền chưa rời ví.', da_hoan_tat: 'Đã hoàn tất. Tiền đã đi.', da_nha: 'Nhân viên đã duyệt cho đi tiếp.' }[s.txn.trang_thai];
+  el.innerHTML = '';
+  const b = document.createElement('b'); b.textContent = s.txn.id + ' · ' + msg; el.appendChild(b);
+  el.appendChild(document.createTextNode(s.txn.mo_ta + (s.vi_khoa ? ' · VÍ ĐÃ KHOÁ' : '')));
+  $('#clock').textContent = 'Giờ ' + s.gio + (s.gio_truc ? ' · nhân viên đang trực' : ' · ngoài giờ trực');
+  const own = $('#own');
+  if (s.cho_khoa && !s.vi_khoa) {
+    own.classList.remove('hide');
+    own.innerHTML = '<b>Trợ lý đề xuất khoá ví.</b> Khoá cả ví thì mở lại phải qua tổng đài, mất nhiều giờ. Chỉ bạn (chủ ví) mới xác nhận được.<br><br>';
+    const g = document.createElement('button'); g.className = 'go'; g.textContent = 'Xác nhận khoá ví';
+    g.onclick = async () => { const r = await api('/api/owner/khoa', { session: sid }); if (r.state) renderState(r.state); add('human', 'Ví đã được khoá theo xác nhận của chủ ví.'); };
+    const n = document.createElement('button'); n.textContent = 'Chưa khoá';
+    n.onclick = async () => { const r = await api('/api/owner/bo-qua-khoa', { session: sid }); if (r.state) renderState(r.state); };
+    own.appendChild(g); own.appendChild(n);
+  } else own.classList.add('hide');
+}
+
+function renderChips() {
+  const c = $('#chips'); c.innerHTML = '';
+  (STARTERS[$('#scn').value] || []).forEach(t => {
+    const b = document.createElement('button'); b.textContent = t; b.onclick = () => send(t); c.appendChild(b);
+  });
+}
+
+async function reset() {
+  const r = await api('/api/reset', { scenario: $('#scn').value, txn: $('#txn').value, may: $('#may').value });
+  sid = r.session; lastMay = $('#may').value;
+  $('#chat').innerHTML = '';
+  add('bot', 'Chào bạn, mình là trợ lý AI của ví. Bạn đang gặp chuyện gì với giao dịch? Nếu cần người thật, bấm "Chuyển nhân viên" bất cứ lúc nào.');
+  renderState(r.state); renderChips();
+}
+
+function confLabel(t) { return t >= 0.75 ? ['cao', 'b-cao'] : t >= 0.6 ? ['vừa', 'b-vua'] : ['thấp', 'b-thap']; }
+
+async function send(text) {
+  text = (text || $('#inp').value).trim();
+  if (!text || busy) return;
+  busy = true; $('#sendBtn').disabled = true; $('#inp').value = '';
+  add('me', text);
+  const typing = add('bot', '...');
+  let r;
+  try { r = await api('/api/chat', { session: sid, message: text }); } catch (e) { r = { error: 'Mất kết nối tới máy chủ.' }; }
+  typing.remove();
+  if (r.error) { add('bot', r.error); }
+  else {
+    const rep = r.reply, d = add('bot', rep.tin_nhan);
+    const m = document.createElement('div'); m.className = 'meta';
+    const [lab, cls] = confLabel(rep.tu_tin);
+    m.innerHTML = 'Mình hiểu là: <b></b> · độ chắc: <span class="badge ' + cls + '">' + lab + '</span>';
+    m.querySelector('b').textContent = NHOM_LABEL[rep.nhom] || rep.nhom;
+    if (rep.bang_chung && rep.bang_chung.length) {
+      const bc = document.createElement('span'); bc.className = 'eff'; bc.style.color = '#6b6b76';
+      bc.textContent = 'Dựa vào lời bạn: ' + rep.bang_chung.map(x => '“' + x + '”').join(' · '); m.appendChild(bc);
+    }
+    rep.effects.forEach(e => {
+      const s = document.createElement('span'); s.className = 'eff ' + e.status;
+      s.textContent = ST_ICON[e.status] + ' ' + (TOOL_LABEL[e.tool] || e.tool) + ': ' + e.note; m.appendChild(s);
+    });
+    const fx = document.createElement('button'); fx.className = 'fix'; fx.textContent = 'Trợ lý hiểu sai? Nói cho mình biết sai chỗ nào';
+    fx.onclick = () => { $('#inp').value = 'Bạn hiểu sai rồi: '; $('#inp').focus(); };
+    m.appendChild(fx); d.appendChild(m);
+    renderState(r.state);
+  }
+  busy = false; $('#sendBtn').disabled = false;
+}
+
+// phía khách: nhận tin từ nhân viên + cập nhật trạng thái
+setInterval(async () => {
+  if (!sid) return;
+  try {
+    const r = await api('/api/state?session=' + sid);
+    if (r.state) renderState(r.state);
+    (r.outbox || []).forEach(t => add('human', 'Nhân viên: ' + t));
+  } catch (e) { }
+}, 3000);
+
+$('#handoff').onclick = async () => {
+  const r = await api('/api/handoff', { session: sid });
+  add('human', r.gio_truc ? 'Đã chuyển nhân viên. Bạn không phải kể lại từ đầu, tóm tắt đã gửi kèm.' : 'Đã ghi nhận. Hiện ngoài giờ trực (8h–20h), nhân viên sẽ xử lý khi vào ca. Cần gấp: gọi 1900 63 68 05.');
+};
+$('#sendBtn').onclick = () => send();
+$('#inp').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+['scn', 'txn', 'may'].forEach(i => $('#' + i).onchange = reset);
+$('#reset').onclick = reset;
+
+// ---- tab ----
+function tab(t) {
+  $('#viewC').classList.toggle('hide', t !== 'C'); $('#viewT').classList.toggle('hide', t !== 'T');
+  $('#tabC').classList.toggle('on', t === 'C'); $('#tabT').classList.toggle('on', t === 'T');
+  if (t === 'T') loadCases();
+}
+$('#tabC').onclick = () => tab('C'); $('#tabT').onclick = () => tab('T');
+
+// ---- màn hình tư vấn viên ----
+function li(parent, text) { const l = document.createElement('li'); l.textContent = text; parent.appendChild(l); }
+async function loadCases() {
+  const r = await api('/api/cases');
+  const waiting = r.cases.filter(c => c.trang_thai === 'cho').length;
+  $('#cnt').textContent = waiting ? '(' + waiting + ')' : '';
+  if ($('#viewT').classList.contains('hide')) return;
+  const box = $('#cases'); box.innerHTML = '';
+  if (!r.cases.length) { box.innerHTML = '<div class="empty">Chưa có ca nào được chuyển.</div>'; return; }
+  r.cases.forEach(c => {
+    const h = c.ho_so, d = document.createElement('div');
+    d.className = 'case ' + (c.trang_thai === 'cho' ? c.lane : 'xong');
+    const t = document.createElement('h3');
+    t.textContent = c.id + ' · làn ' + (c.lane === 'khan' ? 'KHẨN' : 'thường') + ' · ' + (NHOM_LABEL[h.nhom] || h.nhom) + ' · AI chắc ' + Math.round(h.tu_tin * 100) + '%';
+    d.appendChild(t);
+    const p = document.createElement('div'); p.textContent = 'Giao dịch: ' + c.txn.id + ' — ' + c.txn.mo_ta + ' — ' + c.txn.trang_thai; d.appendChild(p);
+    const p2 = document.createElement('div'); p2.textContent = 'Người nhắn: ' + h.nguoi_nhan_tin; d.appendChild(p2);
+    const p3 = document.createElement('div'); p3.textContent = 'Lý do AI: ' + (h.ly_do || '—'); d.appendChild(p3);
+    const p4 = document.createElement('div'); p4.textContent = 'Tin cuối của người dùng: “' + h.tin_nhan_cuoi + '”'; d.appendChild(p4);
+    if (h.bang_chung.length) { const e = document.createElement('div'); e.textContent = 'Bằng chứng:'; d.appendChild(e); const u = document.createElement('ul'); h.bang_chung.forEach(x => li(u, '“' + x + '”')); d.appendChild(u); }
+    if (h.viec_ai_da_lam.length || h.viec_ai_bi_chan.length) {
+      const e = document.createElement('div'); e.textContent = 'AI đã làm / bị chặn:'; d.appendChild(e);
+      const u = document.createElement('ul'); h.viec_ai_da_lam.forEach(x => li(u, '✔ ' + x)); h.viec_ai_bi_chan.forEach(x => li(u, '✖ ' + x)); d.appendChild(u);
+    }
+    if (h.luu_y_server.length) { const e = document.createElement('div'); e.textContent = 'Lưu ý từ hệ thống: ' + h.luu_y_server.join('; '); e.style.color = '#6b6b76'; d.appendChild(e); }
+    if (c.trang_thai === 'cho') {
+      if (h.nhom === 'lua_dao_dang_dien_ra' || h.nhom === 'chiem_tai_khoan') {
+        const w = document.createElement('div'); w.className = 'warn';
+        w.textContent = 'Cảnh báo: AI nghi người dùng đang bị lừa hoặc bị chiếm tài khoản. Xác thực khuôn mặt đúng không có nghĩa là an toàn. Cân nhắc gọi trực tiếp chủ ví trước khi nhả.'; d.appendChild(w);
+      }
+      const b = document.createElement('div'); b.className = 'btns';
+      const a1 = document.createElement('button'); a1.className = h.nhom === 'lua_dao_dang_dien_ra' || h.nhom === 'chiem_tai_khoan' ? '' : ''; a1.textContent = 'Duyệt nhả';
+      a1.onclick = async () => { if (!confirm('Nhả giao dịch là không đảo lại được, tiền đi trong vài giây. Xác nhận?')) return; await api('/api/counselor/decide', { id: c.id, action: 'duyet_nha' }); loadCases(); };
+      const a2 = document.createElement('button'); a2.className = 'red'; a2.textContent = 'Giữ + khoá ví';
+      a2.onclick = async () => { await api('/api/counselor/decide', { id: c.id, action: 'giu_khoa' }); loadCases(); };
+      b.appendChild(a1); b.appendChild(a2); d.appendChild(b);
+    } else {
+      const x = document.createElement('div'); x.style.fontWeight = '600'; x.textContent = 'Đã xử lý: ' + c.quyet_dinh + ' · ' + c.nguoi_duyet + ' · ' + new Date(c.xu_ly_luc).toLocaleTimeString('vi-VN'); d.appendChild(x);
+    }
+    box.appendChild(d);
+  });
+}
+setInterval(loadCases, 3000);
+
+reset();
+</script>
+</body>
+</html>
+

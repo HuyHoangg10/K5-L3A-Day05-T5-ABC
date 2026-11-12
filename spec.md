@@ -91,9 +91,10 @@ Thêm:
 - **Công cụ:** HTML, CSS, JavaScript (giao diện), Node.js (backend), OpenAI/Anthropic API.
 - **Phần mock:** _Giao dịch ví điện tử, trạng thái khóa ví, xác thực danh tính, hàng đợi tư vấn viên và thao tác duyệt giao dịch. Không kết nối hệ thống thanh toán thật.
 - **Có lời gọi AI thật:** Có, khi cấu hình API key và chọn provider.
-![alt text]({29C6C7AA-1D9B-4244-A1D6-6D89C8230CCA}.png)
+![alt text](<img width="1918" height="1009" alt="download" src="https://github.com/user-attachments/assets/0cc84b78-d8f2-40f7-966f-52a5ccd873a7" />
+)
 **Ảnh 1 – Giao diện chat AI và kiểm soát hành động:** Hiển thị độ chắc, bằng chứng, trạng thái tool và quyền chuyển tư vấn viên. Áp dụng HAX G1/G2, G10 và PAIR Explainability/User Control. AI được tự giữ giao dịch, soạn hồ sơ và chuyển nhân viên nhưng không được tự nhả tiền.
-![alt text](image.png)
+![alt text](<img width="1920" height="1006" alt="download (1)" src="https://github.com/user-attachments/assets/c1219da4-0caa-47f3-8368-b812305457cd" />)
 **Ảnh 2 – Giao diện tư vấn viên (Human-in-the-loop):** Hiển thị hồ sơ khẩn cấp, bằng chứng, độ chắc và lịch sử hành động của AI. Áp dụng HAX G10 (chuyển người khi không chắc chắn) và PAIR User Control. Mức tự chủ: AI tự soạn hồ sơ và chuyển nhân viên; quyền nhả giao dịch thuộc tư vấn viên.
  ###  Quyết định thiết kế
 
